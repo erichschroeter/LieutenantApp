@@ -12,4 +12,11 @@
     tools:context="com.lieutenant.erichschroeter.lieutenantapp.EntryActivity"
     tools:showIn="@layout/activity_entry">
 
+    <EditText
+        android:id="@+id/editEntryText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:hint="@string/entry_text_hint" />
+
 </RelativeLayout>
