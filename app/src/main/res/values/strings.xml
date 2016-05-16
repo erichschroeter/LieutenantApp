@@ -2,4 +2,5 @@
     <string name="app_name">LieutenantApp</string>
     <string name="title_activity_entry">EntryActivity</string>
     <string name="entry_text_hint">What happened?</string>
+    <string name="action_save">Save</string>
 </resources>
