@@ -11,7 +11,9 @@ public class LieutenantDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "Lieutenant.db";
+    public static final String DATABASE_NAME = "Lieutenant";
+    public static final String DATABASE_FILE_EXTENSION = ".db";
+    public static final String DATABASE_FILE_NAME = DATABASE_NAME + DATABASE_FILE_EXTENSION;
 
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + LieutenantContract.Entry.TABLE_NAME + " (" +
@@ -44,7 +46,7 @@ public class LieutenantDbHelper extends SQLiteOpenHelper {
 
 
     public LieutenantDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DATABASE_FILE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
