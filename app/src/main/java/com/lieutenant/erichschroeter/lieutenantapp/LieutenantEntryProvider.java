@@ -16,68 +16,58 @@ import android.text.TextUtils;
  * Created by erisch on 5/16/2016.
  */
 public class LieutenantEntryProvider extends ContentProvider {
-    static final String PROVIDER_NAME = "com.lieutenant.erichschroeter.lieutenantapp";
-    static final String PATH_ENTRY = "entry";
-    static final String PATH_TAG = "tag";
-    static final String URL_ENTRY = "content://" + PROVIDER_NAME + "/" + PATH_ENTRY;
-    static final String URL_TAG = "content://" + PROVIDER_NAME + "/" + PATH_TAG;
-    static final Uri CONTENT_URI_ENTRY = Uri.parse(URL_ENTRY);
-    static final Uri CONTENT_URI_TAG = Uri.parse(URL_TAG);
 
     static final int ENTRIES = 1;
     static final int ENTRY_ID = 2;
     static final int TAGS = 3;
     static final int TAG_ID = 4;
+    static final int TAGGED_ENTRIES = 5;
+    static final int TAGGED_ENTRY_ID = 6;
 
     static final UriMatcher _uriMatcher;
     static {
         _uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        _uriMatcher.addURI(PROVIDER_NAME, PATH_ENTRY, ENTRIES);
-        _uriMatcher.addURI(PROVIDER_NAME, PATH_ENTRY + "/#", ENTRY_ID);
-        _uriMatcher.addURI(PROVIDER_NAME, PATH_TAG, TAGS);
-        _uriMatcher.addURI(PROVIDER_NAME, PATH_TAG + "/#", TAG_ID);
+        _uriMatcher.addURI(LieutenantContract.AUTHORITY, "entry", ENTRIES);
+        _uriMatcher.addURI(LieutenantContract.AUTHORITY, "entry/#", ENTRY_ID);
+        _uriMatcher.addURI(LieutenantContract.AUTHORITY, "tag", TAGS);
+        _uriMatcher.addURI(LieutenantContract.AUTHORITY, "tag/#", TAG_ID);
+        _uriMatcher.addURI(LieutenantContract.AUTHORITY, "tagged_entry", TAGGED_ENTRIES);
+        _uriMatcher.addURI(LieutenantContract.AUTHORITY, "tagged_entry/#", TAGGED_ENTRY_ID);
     }
 
-    private SQLiteDatabase _db;
+    private LieutenantDbHelper _dbHelper;
 
     @Override
     public boolean onCreate() {
-        Context context = getContext();
-        LieutenantDbHelper dbHelper = new LieutenantDbHelper(context);
-
-        _db = dbHelper.getWritableDatabase();
-
-        return (_db == null) ? false : true;
+        _dbHelper = new LieutenantDbHelper(getContext());
+        return true;
     }
 
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        SQLiteDatabase db = _dbHelper.getWritableDatabase();
         Uri _uri = null;
         long id = 0;
 
         switch (_uriMatcher.match(uri)) {
             case ENTRIES:
-                id = _db.insert(LieutenantContract.Entry.TABLE_NAME, "", values);
+                id = db.insert(LieutenantContract.Entry.TABLE_NAME, null, values);
 
                 if (id > 0)
                 {
-                    _uri = ContentUris.withAppendedId(CONTENT_URI_ENTRY, id);
+                    _uri = ContentUris.withAppendedId(LieutenantContract.Entry.CONTENT_URI, id);
                     getContext().getContentResolver().notifyChange(_uri, null);
                 }
                 break;
             case ENTRY_ID:
-                id = _db.insert(LieutenantContract.Entry.TABLE_NAME, "", values);
+                id = db.insert(LieutenantContract.Entry.TABLE_NAME, null, values);
 
                 if (id > 0)
                 {
-                    _uri = ContentUris.withAppendedId(CONTENT_URI_ENTRY, id);
+                    _uri = ContentUris.withAppendedId(LieutenantContract.Entry.CONTENT_URI, id);
                     getContext().getContentResolver().notifyChange(_uri, null);
                 }
-                break;
-            case TAGS:
-                break;
-            case TAG_ID:
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -89,6 +79,7 @@ public class LieutenantEntryProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        SQLiteDatabase db = _dbHelper.getReadableDatabase();
         SQLiteQueryBuilder b = new SQLiteQueryBuilder();
         b.setTables(LieutenantContract.Entry.TABLE_NAME);
 
@@ -102,7 +93,7 @@ public class LieutenantEntryProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
-        Cursor c = b.query(_db, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor c = b.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         // Register to watch a content URI for changes.
         c.setNotificationUri(getContext().getContentResolver(), uri);
 
@@ -111,13 +102,14 @@ public class LieutenantEntryProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = _dbHelper.getWritableDatabase();
         int count = 0;
 
         switch (_uriMatcher.match(uri)) {
             case ENTRIES:
                 break;
             case ENTRY_ID:
-                count = _db.update(LieutenantContract.Entry.TABLE_NAME, values,
+                count = db.update(LieutenantContract.Entry.TABLE_NAME, values,
                         LieutenantContract.Entry._ID + "=" + uri.getPathSegments().get(1) +
                                 (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : ""),
                         selectionArgs);
@@ -133,6 +125,7 @@ public class LieutenantEntryProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = _dbHelper.getWritableDatabase();
         int count = 0;
 
         switch (_uriMatcher.match(uri)) {
@@ -140,7 +133,7 @@ public class LieutenantEntryProvider extends ContentProvider {
                 break;
             case ENTRY_ID:
                 String id = uri.getPathSegments().get(1);
-                count = _db.delete(LieutenantContract.Entry.TABLE_NAME,
+                count = db.delete(LieutenantContract.Entry.TABLE_NAME,
                         LieutenantContract.Entry._ID + "=" + id +
                                 (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : ""),
                         selectionArgs);
@@ -159,9 +152,9 @@ public class LieutenantEntryProvider extends ContentProvider {
     public String getType(Uri uri) {
         switch (_uriMatcher.match(uri)) {
             case ENTRIES:
-                return "vnd.android.cursor.dir/vnd.com.lieutenant.erichschroeter.entries";
+                return LieutenantContract.Entry.CONTENT_TYPE;
             case ENTRY_ID:
-                return "vnd.android.cursor.item/vnd.com.lieutenant.erichschroeter.entries";
+                return LieutenantContract.Entry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
