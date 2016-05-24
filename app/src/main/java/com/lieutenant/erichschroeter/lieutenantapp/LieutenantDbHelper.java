@@ -22,7 +22,7 @@ public class LieutenantDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DbSchema.SQL_CREATE_ENTRIES);
-        db.execSQL(DbSchema.SQL_CREATE_ENTRY_TAGS);
+        db.execSQL(DbSchema.SQL_CREATE_TAGS);
         db.execSQL(DbSchema.SQL_CREATE_TAGGED_ENTRIES);
     }
 
@@ -31,7 +31,7 @@ public class LieutenantDbHelper extends SQLiteOpenHelper {
         // This database is only a cache for online data, so its upgrade policy is
         // simply to discard the data and start over.
         db.execSQL(DbSchema.SQL_DELETE_ENTRIES);
-        db.execSQL(DbSchema.SQL_DELETE_ENTRY_TAGS);
+        db.execSQL(DbSchema.SQL_DELETE_TAGS);
         db.execSQL(DbSchema.SQL_DELETE_TAGGED_ENTRIES);
         onCreate(db);
     }

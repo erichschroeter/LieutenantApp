@@ -15,7 +15,7 @@ package com.lieutenant.erichschroeter.lieutenantapp;
     String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + LieutenantContract.Entry.TABLE_NAME + ";";
 
-    String SQL_CREATE_ENTRY_TAGS =
+    String SQL_CREATE_TAGS =
             "CREATE TABLE " + LieutenantContract.Tag.TABLE_NAME + " (" +
                     LieutenantContract.Tag._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     LieutenantContract.Tag.CREATED_AT + " DATETIME DEFAULT CURRENT_TIMESTAMP, " +
@@ -23,7 +23,7 @@ package com.lieutenant.erichschroeter.lieutenantapp;
                     LieutenantContract.Tag.TEXT + " TEXT, " +
                     LieutenantContract.Tag.DESCRIPTION + " TEXT" +
                     ");";
-    String SQL_DELETE_ENTRY_TAGS =
+    String SQL_DELETE_TAGS =
             "DROP TABLE IF EXISTS " + LieutenantContract.Tag.TABLE_NAME + ";";
 
     String SQL_CREATE_TAGGED_ENTRIES =
