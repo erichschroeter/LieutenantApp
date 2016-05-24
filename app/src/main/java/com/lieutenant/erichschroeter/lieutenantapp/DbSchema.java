@@ -30,6 +30,8 @@ package com.lieutenant.erichschroeter.lieutenantapp;
             "CREATE TABLE " + LieutenantContract.TaggedEntries.TABLE_NAME + " (" +
                     LieutenantContract.TaggedEntries.CREATED_AT + " DATETIME DEFAULT CURRENT_TIMESTAMP, " +
                     LieutenantContract.TaggedEntries.UPDATED_AT + " DATETIME DEFAULT CURRENT_TIMESTAMP, " +
+                    LieutenantContract.TaggedEntries.ENTRY_ID + " INTEGER, " +
+                    LieutenantContract.TaggedEntries.TAG_ID + " INTEGER, " +
                     " FOREIGN KEY (" + LieutenantContract.TaggedEntries.ENTRY_ID + ") REFERENCES " +
                     LieutenantContract.Entry.TABLE_NAME + " (" + LieutenantContract.Entry._ID + "), " +
                     " FOREIGN KEY (" + LieutenantContract.TaggedEntries.TAG_ID + ") REFERENCES " +
