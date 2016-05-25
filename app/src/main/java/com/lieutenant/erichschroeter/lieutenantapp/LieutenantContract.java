@@ -55,5 +55,9 @@ public final class LieutenantContract {
     public interface CommonColumns extends BaseColumns {
         String CREATED_AT = "created_at";
         String UPDATED_AT = "updated_at";
+
+        String SORT_ORDER_UPDATED_AT = UPDATED_AT + " DESC";
+        String SORT_ORDER_CREATED_AT = CREATED_AT + " DESC";
+        String SORT_ORDER_DEFAULT = SORT_ORDER_UPDATED_AT;
     }
 }
